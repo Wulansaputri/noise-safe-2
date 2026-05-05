@@ -3,10 +3,37 @@ import 'device_status_card.dart';
 import 'package:noise_safe_1/core/theme/app_colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../alert/notification_screen.dart';
+import '../../../services/user_service.dart';
 
-
-class HomeContent extends StatelessWidget {
+class HomeContent extends StatefulWidget {
   const HomeContent({super.key});
+
+  @override
+  State<HomeContent> createState() => _HomeContentState();
+}
+
+class _HomeContentState extends State<HomeContent> {
+  String name = "";
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    loadUser();
+  }
+
+  void loadUser() async {
+    try {
+      final data = await UserService.getProfile();
+
+      setState(() {
+        name = data['user']['name'];
+        isLoading = false;
+      });
+    } catch (e) {
+      print("ERROR: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,30 +50,37 @@ class HomeContent extends StatelessWidget {
               // 🔹 LOGO + TEXT
               Row(
                 children: [
-                SvgPicture.asset(
-                'assets/icons/logo2.svg',
-                height: 35,
-              ),
+                  SvgPicture.asset(
+                    'assets/icons/logo2.svg',
+                    height: 35,
+                  ),
                   const SizedBox(width: 8),
 
-                  const Column(
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         "Hai!",
                         style: TextStyle(
                           fontSize: 14,
                           color: AppColors.primary,
                         ),
                       ),
-                      Text(
-                        "Michalle",
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+
+                      isLoading
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : Text(
+                              name,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                     ],
                   )
                 ],
@@ -85,14 +119,14 @@ class HomeContent extends StatelessWidget {
         Expanded(
           child: ListView(
             padding: const EdgeInsets.all(16),
-           children: const [
+            children: const [
               DeviceStatusCard(isActive: true),
               DeviceStatusCard(isActive: true),
-              DeviceStatusCard(isActive: false), 
+              DeviceStatusCard(isActive: false),
             ],
           ),
         )
       ],
-    ); 
+    );
   }
 }

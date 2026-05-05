@@ -57,35 +57,43 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => isLoading = true);
 
     try {
-      final response = await AuthService.login(
-        email: emailController.text,
-        password: passwordController.text,
-      );
-
-      final token = response['token'];
-      
-      if (token != null) {
-        // Simpan token ke SharedPreferences
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('auth_token', token);
-
-        if (mounted) {
-          Navigator.pushReplacementNamed(context, "/home");
-        }
-      } else {
-        throw Exception("Token tidak ditemukan dalam respons");
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString().replaceAll("Exception: ", ""))),
+        final response = await AuthService.login(
+          email: emailController.text,
+          password: passwordController.text,
         );
+
+        final token = response['token'];
+
+        if (token != null) {
+          final prefs = await SharedPreferences.getInstance();
+
+          // 🔐 simpan token
+          await prefs.setString('token', token);
+
+          // 👤 simpan user
+          await prefs.setInt('user_id', response['user']?['user_id'] ?? 0);
+          await prefs.setString('name', response['user']?['name'] ?? '');
+
+          print("TOKEN: $token");
+
+          if (mounted) {
+            Navigator.pushReplacementNamed(context, "/home");
+          }
+        } else {
+          throw Exception("Token tidak ditemukan");
+        }
+
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(e.toString().replaceAll("Exception: ", ""))),
+          );
+        }
+      } finally {
+        if (mounted) {
+          setState(() => isLoading = false);
+        }
       }
-    } finally {
-      if (mounted) {
-        setState(() => isLoading = false);
-      }
-    }
   }
 
   @override
