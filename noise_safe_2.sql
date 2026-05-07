@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: May 04, 2026 at 02:33 PM
+-- Generation Time: May 07, 2026 at 03:43 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -108,7 +108,8 @@ CREATE TABLE `devices` (
 
 INSERT INTO `devices` (`device_id`, `user_id`, `owner_name`, `serial_number`, `status`, `purchase_date`, `garansi`, `registered_at`) VALUES
 (1, 1, 'Awa Device', 'NS-001', 'active', '2026-01-01', '2027-01-01', '2026-04-14 12:27:31'),
-(3, 1, 'lexi', 'ABC123', NULL, NULL, NULL, '2026-05-03 14:06:52');
+(3, 1, 'lexi', 'ABC123', NULL, NULL, NULL, '2026-05-03 14:06:52'),
+(6, 6, 'ruby', 'ADD123', 'inactive', NULL, NULL, '2026-05-07 22:32:13');
 
 -- --------------------------------------------------------
 
@@ -204,7 +205,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (10, '2026_03_05_045008_create_notifications_table', 1),
 (11, '2026_03_05_045009_create_noise_logs_table', 1),
 (12, '2026_03_05_045010_create_service_log_table', 1),
-(13, '2026_03_11_093505_create_personal_access_tokens_table', 1);
+(13, '2026_03_11_093505_create_personal_access_tokens_table', 1),
+(14, '2026_05_03_094706_create_personal_access_tokens_table', 2);
 
 -- --------------------------------------------------------
 
@@ -644,7 +646,9 @@ INSERT INTO `parents` (`user_id`, `name`, `email`, `phone`, `password`, `created
 (1, 'Awa', 'awa@email.com', '081234567890', '123456', '2026-04-14 05:27:31'),
 (2, 'Ririn', 'ririn@gmail.com', NULL, '$2y$12$XdB5qCTH.CMhcd82CF0vXue4p7C85aqPIXlbzmqFUF4Ol4eAv5S.e', '2026-05-02 07:50:21'),
 (3, 'rubby', 'ririnda209@gmail.com', '083871081421', '$2y$12$BWPCFeEdqZG0/OD6gYtv2OxIWSDbXUXZD9HpUgtkimv9c2ibx/Ize', '2026-05-03 02:22:54'),
-(4, 'rubby', 'rubby@test.com', '098373827123', '$2y$12$8O0clq6b2dP9X/uMQThMkOJ8K0HHdNhAp73dJH.ArWEmWctc/5cFm', '2026-05-03 02:37:17');
+(4, 'rubby', 'rubby@test.com', '098373827123', '$2y$12$8O0clq6b2dP9X/uMQThMkOJ8K0HHdNhAp73dJH.ArWEmWctc/5cFm', '2026-05-03 02:37:17'),
+(5, 'ririn', 'xxxtimezone@gmail.com', '083871081421', '$2y$12$MhJTlgmmmhMnfTNa3bdMTOA624RD7yyioIWsQT3SFo4SAGL2Bz9/y', '2026-05-05 07:10:31'),
+(6, 'ririnda', 'ririnariyanti440@gmail.com', '098976891421', '$2y$12$wVQe5OdmXqrdSk0/Zh4uquS8ldVex.5Yrq3Et48Xq9Wuvs1RvW/am', '2026-05-05 08:07:51');
 
 -- --------------------------------------------------------
 
@@ -666,16 +670,31 @@ CREATE TABLE `password_reset_tokens` (
 
 CREATE TABLE `personal_access_tokens` (
   `id` bigint UNSIGNED NOT NULL,
-  `tokenable_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tokenable_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `tokenable_id` bigint UNSIGNED NOT NULL,
-  `name` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `token` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `abilities` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `name` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `abilities` text COLLATE utf8mb4_unicode_ci,
   `last_used_at` timestamp NULL DEFAULT NULL,
   `expires_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `personal_access_tokens`
+--
+
+INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `name`, `token`, `abilities`, `last_used_at`, `expires_at`, `created_at`, `updated_at`) VALUES
+(1, 'App\\Models\\Parents', 4, 'auth_token', 'ce21d40f94a1ce32683ffa8bcaadbbf078de82bd91aeaffcad6b01b85cf3115d', '[\"*\"]', NULL, NULL, '2026-05-05 07:35:21', '2026-05-05 07:35:21'),
+(2, 'App\\Models\\Parents', 5, 'auth_token', '2f6619ffe09fd07e9726ec4261fe2b466c9e0956be4ebc8c08943e9059ea9ded', '[\"*\"]', NULL, NULL, '2026-05-05 07:44:35', '2026-05-05 07:44:35'),
+(3, 'App\\Models\\Parents', 5, 'auth_token', 'fc1b0260480990442db18a036f41b9ed93d84d8ba00113f5d0c2df383f6cfec9', '[\"*\"]', NULL, NULL, '2026-05-05 07:58:38', '2026-05-05 07:58:38'),
+(4, 'App\\Models\\Parents', 5, 'auth_token', '71efb095726d2f5291e0b6a6c023ad12aa0275ccd691c43d676624af1bedc1d6', '[\"*\"]', NULL, NULL, '2026-05-05 07:58:45', '2026-05-05 07:58:45'),
+(5, 'App\\Models\\Parents', 6, 'auth_token', 'c506cee02ddf7cea20608c31284e2c3a7296a2b907a2691e57bee26adf6ba7c5', '[\"*\"]', NULL, NULL, '2026-05-05 08:07:51', '2026-05-05 08:07:51'),
+(6, 'App\\Models\\Parents', 6, 'auth_token', 'b8e8c0f7c14f8d85f24f0dcf3b6fad65ec3339be5acb3d45df6ac825c94ca234', '[\"*\"]', NULL, NULL, '2026-05-05 08:08:21', '2026-05-05 08:08:21'),
+(7, 'App\\Models\\Parents', 6, 'auth_token', 'd8c0decb136cb11edf581fad3f0fd232db511d2c951a31ec0d896d45613513a5', '[\"*\"]', '2026-05-07 06:15:29', NULL, '2026-05-05 08:38:09', '2026-05-07 06:15:29'),
+(8, 'App\\Models\\Parents', 6, 'auth_token', '3918b7a54f5302a6ab24c681b85b189b91f4d2488ac2c6487a2c11024600796c', '[\"*\"]', '2026-05-07 08:05:19', NULL, '2026-05-07 08:03:36', '2026-05-07 08:05:19'),
+(9, 'App\\Models\\Parents', 6, 'auth_token', 'e3a20fb337ed0d5d882235e2ff0f54249012bd82e59a52aff258c73f9d22ed45', '[\"*\"]', '2026-05-07 08:36:51', NULL, '2026-05-07 08:36:15', '2026-05-07 08:36:51');
 
 -- --------------------------------------------------------
 
@@ -733,7 +752,9 @@ INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, 
 ('45HwhnaBJ2HqzmKifn7SK2hVy1WVyJv1ickxyEZb', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoia21KN1pac3FEM2hWUGlDeE1oc1o1UE9UMkEwREo5b2diMXlEbndMSiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMCI7czo1OiJyb3V0ZSI7czo0OiJob21lIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1777779973),
 ('nmv2tPnCDRqn8rnneEqmCLub9L31sew488bND684', NULL, '127.0.0.1', 'Thunder Client (https://www.thunderclient.com)', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiVVhncVI2TGl1c0Rkc1A1ZDE1Q3dvVHAzUHlQNHhwMHpDTURHdGdpMiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMCI7czo1OiJyb3V0ZSI7czo0OiJob21lIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1777800620),
 ('D4pqI46VTTv9XissjFlT4AJDYDIGD1qbvoUQmevL', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.118.1 Chrome/142.0.7444.265 Electron/39.8.8 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiOHY5SWtlR2l3OWlncnR6WjFmQUduRFJhNm42MHpMYURUWTZSRVpvOCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7czo1OiJyb3V0ZSI7czo0OiJob21lIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1777800219),
-('KCJZWo98zXJrjp1IThmCXJ3yeg6RBPkPliXuipDY', NULL, '127.0.0.1', 'Thunder Client (https://www.thunderclient.com)', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoib3ZaMGI1WFkxbVl3cmZNV2hJMG5XSUVvQzExN2ZQZEMzbFZ6YmdzTSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7czo1OiJyb3V0ZSI7czo0OiJob21lIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1777800249);
+('KCJZWo98zXJrjp1IThmCXJ3yeg6RBPkPliXuipDY', NULL, '127.0.0.1', 'Thunder Client (https://www.thunderclient.com)', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoib3ZaMGI1WFkxbVl3cmZNV2hJMG5XSUVvQzExN2ZQZEMzbFZ6YmdzTSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7czo1OiJyb3V0ZSI7czo0OiJob21lIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1777800249),
+('wLxJawTR5dHTf8kMerdZdjGdX6umGrZtSUBAhA32', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.118.1 Chrome/142.0.7444.265 Electron/39.8.8 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoicWNLSXgyNFBRdXpwZG9acERlVVc0am14SnNuMGIxRmJtU0M1d1lTcyI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7czo1OiJyb3V0ZSI7czo0OiJob21lIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1777989382),
+('ldOOEINzGzRF0avF6C0nS5e0shh990MAPYODqHmR', NULL, '127.0.0.1', 'Thunder Client (https://www.thunderclient.com)', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiRXd4a0RlZjZrYlRIcGZxdzNJYk9PeWhBR3BkcXA1UjBhU0JtQ1l0NiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzM6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1777995168);
 
 -- --------------------------------------------------------
 
@@ -913,13 +934,19 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT for table `devices`
 --
 ALTER TABLE `devices`
-  MODIFY `device_id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `device_id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `device_location`
 --
 ALTER TABLE `device_location`
   MODIFY `loc_id` bigint NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `migrations`
+--
+ALTER TABLE `migrations`
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `noise_logs`
@@ -937,7 +964,13 @@ ALTER TABLE `notifications`
 -- AUTO_INCREMENT for table `parents`
 --
 ALTER TABLE `parents`
-  MODIFY `user_id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `user_id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `personal_access_tokens`
+--
+ALTER TABLE `personal_access_tokens`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `purchase`

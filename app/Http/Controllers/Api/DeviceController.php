@@ -44,4 +44,18 @@ class DeviceController extends Controller
             'message' => 'Device berhasil terhubung'
         ]);
     }
+
+    public function index(Request $request)
+    {
+        $user = $request->user();
+
+        $devices = DB::table('devices')
+            ->where('user_id', $user->user_id)
+            ->get();
+
+        return response()->json([
+            'devices' => $devices
+        ]);
+    
+    }
 }

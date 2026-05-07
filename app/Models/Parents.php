@@ -10,7 +10,7 @@ use Illuminate\Notifications\Notifiable;
 class Parents extends Authenticatable
 {
     use HasFactory, HasApiTokens, Notifiable;
-
+    
     protected $table = 'parents';
     protected $primaryKey = 'user_id';
     public $timestamps = false;

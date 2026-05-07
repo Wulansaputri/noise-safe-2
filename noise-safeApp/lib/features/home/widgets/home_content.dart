@@ -4,6 +4,7 @@ import 'package:noise_safe_1/core/theme/app_colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../alert/notification_screen.dart';
 import '../../../services/user_service.dart';
+import '../../../services/device_service.dart';
 
 class HomeContent extends StatefulWidget {
   const HomeContent({super.key});
@@ -16,20 +17,26 @@ class _HomeContentState extends State<HomeContent> {
   String name = "";
   bool isLoading = true;
 
+  List devices = [];
+
   @override
   void initState() {
     super.initState();
     loadUser();
+    loadDevices();
   }
 
   void loadUser() async {
     try {
       final data = await UserService.getProfile();
 
+      if (!mounted) return;
+
       setState(() {
         name = data['user']['name'];
         isLoading = false;
       });
+      
     } catch (e) {
       print("ERROR: $e");
     }
@@ -119,14 +126,30 @@ class _HomeContentState extends State<HomeContent> {
         Expanded(
           child: ListView(
             padding: const EdgeInsets.all(16),
-            children: const [
-              DeviceStatusCard(isActive: true),
-              DeviceStatusCard(isActive: true),
-              DeviceStatusCard(isActive: false),
-            ],
+            children: devices.map((device) {
+              return DeviceStatusCard(
+                isActive: true,
+                ownerName: device['owner_name'] ?? '-',
+                serialNumber: device['serial_number'] ?? '-',
+              );
+            }).toList(),
           ),
         )
       ],
     );
   }
+      void loadDevices() async {
+      try {
+        final data = await DeviceService.getDevices();
+
+        if (!mounted) return;
+
+        setState(() {
+          devices = data;
+        });
+
+      } catch (e) {
+        print("DEVICE ERROR: $e");
+      }
+    }
 }
