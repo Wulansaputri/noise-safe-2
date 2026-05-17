@@ -19,10 +19,11 @@ class ProfileViewModel extends ChangeNotifier {
   --------------------------------------------------
   */
 
-  String name = "Rubby Ririn";
-  String email = "Rubby@gmail.com";
-  int totalDevice = 1;
-  int connectedDevice = 1;
+  String name = "";
+  String email = "";
+  int totalDevice = 0;
+  int connectedDevice = 0;
+
 
   /*
   --------------------------------------------------

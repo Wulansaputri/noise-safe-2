@@ -6,19 +6,47 @@ import '../../../shared_widgets/custom_header.dart';
 import '../../core/constants/app_spacing.dart';
 
 class EditProfileScreen extends StatefulWidget {
-  const EditProfileScreen({super.key});
+  final String name;
+  final String email;
+
+  const EditProfileScreen({
+    super.key,
+    required this.name,
+    required this.email,
+  });
 
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  final TextEditingController nameController =
-      TextEditingController(text: "Rubby Ririn");
-  final TextEditingController emailController =
-      TextEditingController(text: "Rubby@gmail.com");
-  final TextEditingController phoneController =
-      TextEditingController(text: "83871081421");
+late TextEditingController nameController;
+late TextEditingController emailController;
+late TextEditingController phoneController;
+
+bool isSaving = false;
+
+@override
+void dispose() {
+  nameController.dispose();
+  emailController.dispose();
+  phoneController.dispose();
+  super.dispose();
+}
+
+@override
+void initState() {
+  super.initState();
+
+  nameController =
+      TextEditingController(text: widget.name);
+
+  emailController =
+      TextEditingController(text: widget.email);
+
+  phoneController =
+      TextEditingController();
+}
 
   @override
   Widget build(BuildContext context) {
@@ -122,9 +150,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   /// ===== BUTTON =====
                   CustomButton(
                     text: "Simpan Profil",
-                    onPressed: () {},
-                  ),
-
+                      onPressed: isSaving
+                      ? null
+                      : () async {
+                          await updateProfile();
+                      },
+                    ),
                   const SizedBox(height: 20),
                 ],
               ),
@@ -144,5 +175,47 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         fontWeight: FontWeight.w500,
       ),
     );
+  }
+
+    Future<void> updateProfile() async {
+
+    setState(() {
+      isSaving = true;
+    });
+
+    try {
+
+      /// NANTI API UPDATE DI SINI
+
+      await Future.delayed(
+        const Duration(seconds: 1),
+      );
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Profil berhasil diperbarui"),
+        ),
+      );
+
+      Navigator.pop(context, true);
+
+    } catch (e) {
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Error: $e"),
+        ),
+      );
+
+    } finally {
+
+      if (mounted) {
+        setState(() {
+          isSaving = false;
+        });
+      }
+    }
   }
 }

@@ -70,4 +70,35 @@ class DeviceService {
       throw Exception(data["message"] ?? "Gagal ambil device");
     }
   }
+
+
+  // ================= DELETE DEVICE =================
+    static Future<void> deleteDevice(int id) async {
+
+    final prefs =
+    await SharedPreferences.getInstance();
+
+    final token = prefs.getString('token');
+
+    final response = await http.delete(
+
+      Uri.parse(
+        "${ApiConstants.baseUrl}/devices/$id",
+      ),
+
+      headers: {
+
+        "Accept": "application/json",
+
+        "Authorization": "Bearer $token",
+      },
+    );
+
+    if (response.statusCode != 200) {
+
+      throw Exception(
+        "Gagal hapus device",
+      );
+    }
+  }
 }

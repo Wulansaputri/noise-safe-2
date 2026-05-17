@@ -21,6 +21,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/devices',        [DeviceController::class, 'index']);
     Route::get('/devices/{id}',   [DeviceController::class, 'show']);
     Route::put('/devices/{id}',   [DeviceController::class, 'update']);
+    Route::delete('/devices/{id}', [DeviceController::class, 'delete']);
 
     // Purchases
     Route::get('/purchases',      [PurchaseController::class, 'index']);

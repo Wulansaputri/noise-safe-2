@@ -54,8 +54,45 @@ class DeviceController extends Controller
             ->get();
 
         return response()->json([
-            'devices' => $devices
+        'devices' => $devices->map(function ($device) {
+
+            return [
+
+                'device_id' => $device->device_id,
+
+                'owner_name' => $device->owner_name,
+
+                'serial_number' => $device->serial_number,
+
+                'battery' => '100%',
+
+                'location' => 'Unknown',
+
+                'is_active' => $device->status === 'active',
+                ];
+            }),
         ]);
     
+    }
+
+    public function delete($id)
+    {
+        $device = DB::table('devices')
+            ->where('device_id', $id)
+            ->first();
+
+        if (!$device) {
+            return response()->json([
+                'message' => 'Device tidak ditemukan'
+            ], 404);
+        }
+
+        DB::table('devices')
+            ->where('device_id', $id)
+            ->delete();
+
+        return response()->json([
+            'message' => 'Device berhasil dihapus'
+        ]);
     }
 }

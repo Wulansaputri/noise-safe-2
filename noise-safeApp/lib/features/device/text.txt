@@ -1,0 +1,253 @@
+// import 'package:flutter/material.dart';
+// import 'package:google_fonts/google_fonts.dart';
+// import '../../core/theme/app_colors.dart';
+
+// /*
+// |--------------------------------------------------------------------------
+// | MANAGE DEVICE SCREEN - NOISE SAFE
+// |--------------------------------------------------------------------------
+// | Menampilkan daftar device user
+// |--------------------------------------------------------------------------
+// */
+
+// class ManageDeviceScreen extends StatelessWidget {
+//   const ManageDeviceScreen({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: const Color(0xFFF7F7F7),
+
+//       body: Column(
+//         children: [
+
+//           /*
+//           --------------------------------------------------
+//           HEADER
+//           --------------------------------------------------
+//           */
+
+//          Container(
+//             width: double.infinity,
+//             padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+//             decoration: BoxDecoration(
+//               color: Colors.white,
+//               boxShadow: [
+//                 BoxShadow(
+//                   color: Colors.black.withOpacity(0.05),
+//                   blurRadius: 8,
+//                   offset: const Offset(0, 3),
+//                 ),
+//               ],
+//             ),
+//             child: SafeArea(
+//               bottom: false,
+//               child: Align(
+//                 alignment: Alignment.centerLeft,
+//                 child: Text(
+//                   "Kelola Perangkat",
+//                   style: GoogleFonts.madimiOne(
+//                     fontSize: 18,
+//                     color: AppColors.primary,
+//                   ),
+//                 ),
+//               ),
+//             ),
+//           ),
+
+//           /*
+//           --------------------------------------------------
+//           LIST DEVICE
+//           --------------------------------------------------
+//           */
+
+//           Expanded(
+//             child: ListView(
+//               padding: const EdgeInsets.all(20),
+//               children: const [
+
+//                 DeviceCard(
+//                   name: "Angeli",
+//                   code: "NB200-1",
+//                   battery: "89%",
+//                   location: "Gedung Sate, Bandung",
+//                   isActive: true,
+//                 ),
+
+//                 DeviceCard(
+//                   name: "Angeli",
+//                   code: "NB200-1",
+//                   battery: "89%",
+//                   location: "Gedung Sate, Bandung",
+//                   isActive: false,
+//                 ),
+
+//                 DeviceCard(
+//                   name: "Angeli",
+//                   code: "NB200-1",
+//                   battery: "89%",
+//                   location: "Gedung Sate, Bandung",
+//                   isActive: false,
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+
+// /*
+// |--------------------------------------------------------------------------
+// | DEVICE CARD
+// |--------------------------------------------------------------------------
+// */
+
+// class DeviceCard extends StatelessWidget {
+//   final String name;
+//   final String code;
+//   final String battery;
+//   final String location;
+//   final bool isActive;
+
+//   const DeviceCard({
+//     super.key,
+//     required this.name,
+//     required this.code,
+//     required this.battery,
+//     required this.location,
+//     required this.isActive,
+//   });
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       margin: const EdgeInsets.only(bottom: 16),
+//       decoration: BoxDecoration(
+//         color: Colors.white,
+//         borderRadius: BorderRadius.circular(16),
+//       ),
+//       child: Row(
+//         children: [
+
+//           /*
+//           --------------------------------------------------
+//           STRIP WARNA KIRI
+//           --------------------------------------------------
+//           */
+
+//           Container(
+//             width: 6,
+//             height: 90,
+//             decoration: BoxDecoration(
+//               color: isActive
+//                   ? AppColors.primary
+//                   : const Color(0xFFF093DA),
+//               borderRadius: const BorderRadius.only(
+//                 topLeft: Radius.circular(16),
+//                 bottomLeft: Radius.circular(16),
+//               ),
+//             ),
+//           ),
+
+//           Expanded(
+//             child: Padding(
+//               padding: const EdgeInsets.all(14),
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+
+//                   /*
+//                   --------------------------------------------------
+//                   NAMA + STATUS
+//                   --------------------------------------------------
+//                   */
+
+//                   Row(
+//                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                     children: [
+//                       Row(
+//                         children: [
+//                           const Icon(Icons.person, size: 18),
+//                           const SizedBox(width: 6),
+//                           Text(
+//                             name,
+//                             style: GoogleFonts.inter(
+//                               fontWeight: FontWeight.w600,
+//                             ),
+//                           ),
+//                           const SizedBox(width: 6),
+//                           Text(
+//                             code,
+//                             style: GoogleFonts.inter(
+//                               fontSize: 12,
+//                               color: Colors.grey,
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+
+//                       Container(
+//                         padding: const EdgeInsets.symmetric(
+//                             horizontal: 10, vertical: 4),
+//                         decoration: BoxDecoration(
+//                           color: isActive
+//                               ? Colors.green
+//                               : Colors.red,
+//                           borderRadius: BorderRadius.circular(8),
+//                         ),
+//                         child: Text(
+//                           isActive ? "Aktif" : "Tidak aktif",
+//                           style: const TextStyle(
+//                             color: Colors.white,
+//                             fontSize: 11,
+//                           ),
+//                         ),
+//                       )
+//                     ],
+//                   ),
+
+//                   const SizedBox(height: 8),
+
+//                   /*
+//                   --------------------------------------------------
+//                   BATTERY
+//                   --------------------------------------------------
+//                   */
+
+//                   Row(
+//                     children: [
+//                       const Icon(Icons.battery_full, size: 16),
+//                       const SizedBox(width: 6),
+//                       Text(
+//                         battery,
+//                         style: GoogleFonts.inter(fontSize: 12),
+//                       ),
+//                     ],
+//                   ),
+
+//                   const SizedBox(height: 6),
+
+//                   /*
+//                   --------------------------------------------------
+//                   LOCATION
+//                   --------------------------------------------------
+//                   */
+
+//                   Text(
+//                     location,
+//                     style: GoogleFonts.inter(
+//                       fontSize: 11,
+//                       color: Colors.grey,
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           )
+//         ],
+//       ),
+//     );
+//   }
+// }

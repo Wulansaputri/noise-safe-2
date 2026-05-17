@@ -128,9 +128,14 @@ class _HomeContentState extends State<HomeContent> {
             padding: const EdgeInsets.all(16),
             children: devices.map((device) {
               return DeviceStatusCard(
-                isActive: true,
-                ownerName: device['owner_name'] ?? '-',
-                serialNumber: device['serial_number'] ?? '-',
+                isActive:
+                    device['status'] == 'active',
+
+                ownerName:
+                    device['owner_name'] ?? '-',
+
+                serialNumber:
+                    device['serial_number'] ?? '-',
               );
             }).toList(),
           ),

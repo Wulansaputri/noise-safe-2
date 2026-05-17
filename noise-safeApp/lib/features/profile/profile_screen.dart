@@ -4,8 +4,10 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_colors.dart';
 import 'package:noise_safe_1/shared_widgets/custom_header.dart';
 import 'package:noise_safe_1/core/constants/app_spacing.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-
+import '../../services/user_service.dart';
+import '../../services/device_service.dart';
 import 'profile_viewmodel.dart';
 import 'edit_profile_screen.dart';
 import 'reset_password_screen.dart';
@@ -19,10 +21,61 @@ class ProfileScreen extends StatefulWidget {
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
+
 class _ProfileScreenState extends State<ProfileScreen> {
   bool isNotificationOn = true;
+  String name = "";
+  String email = "";
+  bool isLoading = true;
+
+  int totalDevice = 0;
+  int connectedDevice = 0;
+
 
   final ProfileViewModel viewModel = ProfileViewModel();
+  @override
+  void initState() {
+    super.initState();
+    loadProfile();
+  }
+
+  Future<void> loadProfile() async {
+
+  try {
+
+    final data =
+        await UserService.getProfile();
+
+    final devices =
+        await DeviceService.getDevices();
+
+    if (!mounted) return;
+
+    setState(() {
+
+      name = data['user']['name'] ?? "";
+
+      email = data['user']['email'] ?? "";
+
+      totalDevice = devices.length;
+
+      connectedDevice = devices.where(
+        (e) => e['is_active'] == true,
+      ).length;
+
+      isLoading = false;
+    });
+
+  } catch (e) {
+
+    print("PROFILE ERROR: $e");
+
+    setState(() {
+
+      isLoading = false;
+    });
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +112,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              viewModel.name,
+                              isLoading ? "Loading..." : name,
                               style: GoogleFonts.inter(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
@@ -67,7 +120,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              viewModel.email,
+                              isLoading ? "Loading..." : email,
                               style: GoogleFonts.inter(
                                 fontSize: 13,
                                 color: Colors.grey,
@@ -89,13 +142,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         _buildStatCard(
                           title: "Jumlah Perangkat",
-                          value: viewModel.totalDevice.toString(),
+                          value: totalDevice.toString(),
                           icon: Icons.devices,
                         ),
                         const SizedBox(width: AppSpacing.sm),
                         _buildStatCard(
                           title: "Terhubung",
-                          value: viewModel.connectedDevice.toString(),
+                          value: connectedDevice.toString(),
                           icon: Icons.check_circle_outline,
                         ),
                       ],
@@ -118,7 +171,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => const EditProfileScreen(),
+                              builder: (_) => EditProfileScreen(
+                                name: name,
+                                email: email,
+                              ),
                             ),
                           ),
                         ),
@@ -182,7 +238,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                          onTap: () => viewModel.logout(context),
+                          onTap: () => logout(context),
                         ),
 
                         const SizedBox(height: AppSpacing.md),
@@ -195,6 +251,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  //fitur logout
+    Future<void> logout(BuildContext context) async {
+
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.remove('token');
+
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      "/login",
+      (route) => false,
     );
   }
 

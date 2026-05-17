@@ -1,0 +1,16 @@
+1. belum pasang api google maps 
+2. belum pasang notification
+3. belum bisa manage device (belum bisa di edit )
+4. ganti gaya alert di auth
+5. kasih peraturan sandi 
+6. tidak singkron antara manage device dan home 
+7. saat di bukan ptofile nomor yang di daftar kan muncul dan kode negara tidak muncul
+8. loading lama 
+9.hapus belum bisa 
+
+tugas buat kamu saput
+1.munculin maps pake package flutter maps
+2. pasang api google maps nya
+3. kalo bisa sekalian benerin bug di manage device kenapa ga bisa di hapus si card nya 
+dan belum munucl fitur edit
+4. ganti gaya alert di auth

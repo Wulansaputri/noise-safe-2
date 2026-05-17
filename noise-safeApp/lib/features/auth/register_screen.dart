@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:noise_safe_1/core/theme/app_colors.dart';
+import 'package:country_code_picker/country_code_picker.dart';
 
 import '../../shared_widgets/custom_button.dart';
 import '../../shared_widgets/custom_textfield.dart';
@@ -36,6 +37,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
+  final TextEditingController countryCodeController = TextEditingController();
 
   final FocusNode nameFocus = FocusNode();
   final FocusNode emailFocus = FocusNode();
@@ -46,6 +48,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool isPasswordHidden = true;
   bool isConfirmPasswordHidden = true;
   bool isLoading = false;
+  String selectedCountryCode = "+62"; // Default ke Indonesia
 
   /*
   --------------------------------------------------
