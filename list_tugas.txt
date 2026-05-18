@@ -1,4 +1,4 @@
-1. belum pasang api google maps 
+1. belum pasang api google maps //sudah
 2. belum pasang notification
 3. belum bisa manage device (belum bisa di edit )
 4. ganti gaya alert di auth
@@ -9,8 +9,32 @@
 9.hapus belum bisa 
 
 tugas buat kamu saput
-1.munculin maps pake package flutter maps
-2. pasang api google maps nya
+1.munculin maps pake package flutter maps //sudah
+2. pasang api google maps nya //sudah
 3. kalo bisa sekalian benerin bug di manage device kenapa ga bisa di hapus si card nya 
 dan belum munucl fitur edit
 4. ganti gaya alert di auth
+
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyAfGw1YTSQvWwCUiU3vs5OWrwlgvv1aKiA",
+    authDomain: "noise-safe.firebaseapp.com",
+    projectId: "noise-safe",
+    storageBucket: "noise-safe.firebasestorage.app",
+    messagingSenderId: "201370298534",
+    appId: "1:201370298534:web:012091707f261050e62c67",
+    measurementId: "G-F02EV3DH6F"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>

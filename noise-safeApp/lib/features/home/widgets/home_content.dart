@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'device_status_card.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:noise_safe_1/core/theme/app_colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../alert/notification_screen.dart';
@@ -112,13 +114,58 @@ class _HomeContentState extends State<HomeContent> {
           ),
         ),
 
-        // 🗺️ MAP
-        Container(
-          height: 280,
-          width: double.infinity,
-          color: AppColors.textSecondary,
-          child: const Center(child: Text("Google Map Here")),
+        SizedBox(
+        height: 280,
+        width: double.infinity,
+
+        child: FlutterMap(
+
+          options: const MapOptions(
+
+            initialCenter: LatLng(
+              -6.9175,
+              107.6191,
+            ),
+
+            initialZoom: 13,
+          ),
+
+          children: [
+
+            TileLayer(
+
+              urlTemplate:
+                  'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+
+              userAgentPackageName:
+                  'com.example.noise_safe_1',
+            ),
+
+            MarkerLayer(
+
+              markers: [
+
+                Marker(
+
+                  point: const LatLng(
+                    -6.9175,
+                    107.6191,
+                  ),
+
+                  width: 80,
+                  height: 80,
+
+                  child: const Icon(
+                    Icons.location_on,
+                    color: Colors.red,
+                    size: 40,
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
+      ),
 
         const SizedBox(height: 10),
 

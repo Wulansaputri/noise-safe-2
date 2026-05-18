@@ -82,16 +82,16 @@ class _ManageDeviceScreenState
             children: [
 
               Text(
-                "Masukkan ID Device (${(device['device_id'] as num).toInt()}) untuk konfirmasi.",
+                "Masukkan Serial Number (${device['serial_number']}) untuk konfirmasi.",
               ),
 
               const SizedBox(height: 16),
 
               TextField(
                 controller: controller,
-                keyboardType: TextInputType.number,
+                keyboardType: TextInputType.text,
                 decoration: const InputDecoration(
-                  hintText: "Masukkan ID",
+                  hintText: "Masukkan Serial Number",
                 ),
               ),
             ],
@@ -114,9 +114,10 @@ class _ManageDeviceScreenState
               onPressed: () async {
 
                 final inputId = controller.text.trim();
+                final serialNumber = device['serial_number'].toString();
                 final deviceId = (device['device_id'] as num).toInt().toString();
 
-                if (inputId == deviceId) {
+                if (inputId == serialNumber) {
 
                   await DeviceService.deleteDevice(
                     int.parse(deviceId),
