@@ -5,6 +5,7 @@ import '../core/constants/api_constants.dart';
 
 class UserService {
   static Future<Map<String, dynamic>> getProfile() async {
+
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
@@ -15,6 +16,9 @@ class UserService {
         "Authorization": "Bearer $token",
       },
     );
+
+    print("PROFILE STATUS: ${response.statusCode}");
+    print("PROFILE BODY: ${response.body}");
 
     return jsonDecode(response.body);
   }

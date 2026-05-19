@@ -8,6 +8,8 @@ import 'package:country_code_picker/country_code_picker.dart';
 import '../../shared_widgets/custom_button.dart';
 import '../../shared_widgets/custom_textfield.dart';
 import '../../services/auth_service.dart';
+import '../../services/avatar_service.dart'; // <==== IMPORT INI
+
 /*
 |--------------------------------------------------------------------------
 | REGISTER SCREEN - NOISE SAFE
@@ -60,9 +62,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void initState() {
     super.initState();
 
+    // <==== TAMBAHAN: Set default avatar SEBELUM registrasi
+    _setDefaultAvatar();
+
     Future.delayed(const Duration(milliseconds: 300), () {
       FocusScope.of(context).requestFocus(nameFocus);
     });
+  }
+
+  // <==== TAMBAHAN METHOD INI
+  Future<void> _setDefaultAvatar() async {
+    final prefs = await SharedPreferences.getInstance();
+    final existingAvatar = prefs.getString('user_avatar');
+    
+    if (existingAvatar == null) {
+      await prefs.setString('user_avatar', "assets/avatars/avatar1.png");
+      print("✅ Default avatar telah disimpan");
+    } else {
+      print("📸 Avatar sudah ada: $existingAvatar");
+    }
   }
 
   /*
@@ -134,7 +152,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   /*
                   --------------------------------------------------
                   NAMA
-                  --------------------------------------------------
+                                                  --------------------------------------------------
                   */
 
                   CustomTextField(
@@ -340,18 +358,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
     setState(() => isLoading = true);
 
     try {
+      // <==== TAMBAHAN: Ambil avatar dari SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      String avatarPath = prefs.getString('user_avatar') ?? "assets/avatars/avatar1.png";
+      print("📸 Avatar yang akan dikirim: $avatarPath");
+
       final response = await AuthService.register(
         name: nameController.text,
         email: emailController.text,
         password: passwordController.text,
         phone: phoneController.text,
+        avatar: avatarPath, // <==== TAMBAHAN: Kirim avatar
       );
 
       final token = response['token'];
 
       if (token != null) {
-        final prefs = await SharedPreferences.getInstance();
         await prefs.setString('auth_token', token);
+        
+        // <==== TAMBAHAN: Simpan nama dan email juga
+        await prefs.setString('name', nameController.text);
+        await prefs.setString('email', emailController.text);
+        
+        // Pastikan avatar tersimpan
+        await AvatarService.setDefaultAvatar();
+
+        print("✅ Register berhasil, token: $token");
+        print("📸 Avatar tersimpan: $avatarPath");
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -363,6 +396,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         throw Exception("Token tidak ditemukan dalam respons");
       }
     } catch (e) {
+      print("❌ Register error: $e");
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(e.toString().replaceAll("Exception: ", ""))),
@@ -387,11 +421,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
     emailController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
+    phoneController.dispose(); // <==== TAMBAHAN: dispose phone controller
 
     nameFocus.dispose();
     emailFocus.dispose();
     passwordFocus.dispose();
     confirmPasswordFocus.dispose();
+    phoneFocus.dispose(); // <==== TAMBAHAN: dispose phone focus
 
     super.dispose();
   }

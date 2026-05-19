@@ -1,28 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
-/*
-|--------------------------------------------------------------------------
-| Splash Screen - Noise Safe
-|--------------------------------------------------------------------------
-| Halaman pertama yang muncul saat aplikasi dibuka.
-| Fungsi utama:
-| 1. Menampilkan logo aplikasi di tengah layar
-| 2. Memberi waktu loading singkat
-| 3. Melakukan transisi fade menuju halaman onboarding
-|
-| Desain mengikuti UI:
-| - Background putih
-| - Logo SVG di tengah
-| - Animasi fade out saat pindah halaman
-|--------------------------------------------------------------------------
-*/
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  State<SplashScreen> createState() =>
+      _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen>
@@ -30,16 +15,6 @@ class _SplashScreenState extends State<SplashScreen>
 
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
-
-  /*
-  |--------------------------------------------------------------------------
-  | INIT STATE
-  |--------------------------------------------------------------------------
-  | - Menginisialisasi animation controller
-  | - Mengatur durasi animasi fade
-  | - Menjalankan timer sebelum pindah ke onboarding
-  |--------------------------------------------------------------------------
-  */
 
   @override
   void initState() {
@@ -59,38 +34,52 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   /*
-  |--------------------------------------------------------------------------
-  | SPLASH TIMER
-  |--------------------------------------------------------------------------
-  | Memberikan delay sekitar 2 detik sebelum animasi fade dimulai
-  | Setelah animasi selesai -> navigasi ke halaman onboarding
-  |--------------------------------------------------------------------------
+  |----------------------------------------------------------------
+  | SPLASH + CHECK TOKEN
+  |----------------------------------------------------------------
   */
 
   void _startSplash() async {
-    await Future.delayed(const Duration(seconds: 2));
 
+    // ⏳ delay splash
+    await Future.delayed(
+      const Duration(seconds: 2),
+    );
+
+    // 🎬 animasi fade
     await _controller.forward();
 
-    if (mounted) {
-      Navigator.pushReplacementNamed(context, "/onboarding");
+    // 🔐 cek token
+    final prefs =
+        await SharedPreferences.getInstance();
+
+    final token = prefs.getString('token');
+
+    if (!mounted) return;
+
+    // ✅ SUDAH LOGIN
+    if (token != null &&
+        token.isNotEmpty) {
+
+      Navigator.pushReplacementNamed(
+        context,
+        "/home",
+      );
+    }
+
+    // ❌ BELUM LOGIN
+    else {
+
+      Navigator.pushReplacementNamed(
+        context,
+        "/onboarding",
+      );
     }
   }
 
-  /*
-  |--------------------------------------------------------------------------
-  | BUILD UI SPLASH SCREEN
-  |--------------------------------------------------------------------------
-  | Layout sangat sederhana:
-  | - Scaffold
-  | - Background putih
-  | - Logo SVG di tengah layar
-  | - Dibungkus FadeTransition untuk efek fade out
-  |--------------------------------------------------------------------------
-  */
-
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Colors.white,
 
@@ -106,14 +95,6 @@ class _SplashScreenState extends State<SplashScreen>
       ),
     );
   }
-
-  /*
-  |--------------------------------------------------------------------------
-  | DISPOSE
-  |--------------------------------------------------------------------------
-  | Membersihkan animation controller agar tidak terjadi memory leak
-  |--------------------------------------------------------------------------
-  */
 
   @override
   void dispose() {
