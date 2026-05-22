@@ -14,6 +14,7 @@ Route::post('/login',    [AuthController::class, 'login']);
 // Protected routes (perlu token)
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [AuthController::class, 'profile']);
+    Route::put('/update-profile', [AuthController::class, 'updateProfile']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/device/connect', [DeviceController::class, 'connect']);
 

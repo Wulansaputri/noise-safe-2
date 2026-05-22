@@ -191,17 +191,23 @@ class _HomeContentState extends State<HomeContent> {
     );
   }
       void loadDevices() async {
-      try {
-        final data = await DeviceService.getDevices();
 
-        if (!mounted) return;
+  try {
 
-        setState(() {
-          devices = data;
-        });
+    final data =
+        await DeviceService.getDevices();
 
-      } catch (e) {
-        print("DEVICE ERROR: $e");
-      }
-    }
-}
+    print("HOME DEVICES: $data");
+
+    if (!mounted) return;
+
+    setState(() {
+
+      devices = data;
+    });
+
+  } catch (e) {
+
+    print("DEVICE ERROR: $e");
+  }
+}}

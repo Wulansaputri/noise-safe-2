@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Parents;
 
@@ -33,7 +32,9 @@ class AuthController extends Controller
             'created_at' => now(),
         ]);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $token = $user
+            ->createToken('auth_token')
+            ->plainTextToken;
 
         return response()->json([
             'message' => 'Register berhasil',
@@ -54,16 +55,33 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        $user = Parents::where('email', $request->email)->first();
+        $user = Parents::where(
+            'email',
+            $request->email
+        )->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        if (
+            !$user ||
+            !Hash::check(
+                $request->password,
+                $user->password
+            )
+        ) {
             return response()->json([
-                'message' => 'Email atau password salah'
+                'message' =>
+                    'Email atau password salah'
             ], 401);
         }
 
-        // 🔐 generate token
-        $token = $user->createToken('auth_token')->plainTextToken;
+        /*
+        ------------------------------------------------
+        GENERATE TOKEN
+        ------------------------------------------------
+        */
+
+        $token = $user
+            ->createToken('auth_token')
+            ->plainTextToken;
 
         return response()->json([
             'message' => 'Login berhasil',
@@ -86,12 +104,42 @@ class AuthController extends Controller
 
     /*
     |--------------------------------------------------------------------------
+    | UPDATE PROFILE
+    |--------------------------------------------------------------------------
+    */
+    public function updateProfile(Request $request)
+    {
+        $request->validate([
+            'name'   => 'required|string|max:255',
+            'phone'  => 'nullable|string|max:20',
+            'avatar' => 'nullable|string',
+        ]);
+
+        $user = $request->user();
+
+        $user->update([
+            'name'   => $request->name,
+            'phone'  => $request->phone,
+            'avatar' => $request->avatar,
+        ]);
+
+        return response()->json([
+            'message' => 'Profile berhasil diupdate',
+            'user'    => $user,
+        ]);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
     | LOGOUT
     |--------------------------------------------------------------------------
     */
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        $request->user()
+            ->currentAccessToken()
+            ->delete();
+
         return response()->json([
             'message' => 'Logout berhasil'
         ]);

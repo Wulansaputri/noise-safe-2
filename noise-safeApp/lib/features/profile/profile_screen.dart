@@ -8,6 +8,7 @@ import 'package:noise_safe_1/core/constants/app_spacing.dart';
 
 import '../../services/device_service.dart';
 import '../../services/avatar_service.dart';
+import '../../services/user_service.dart';
 
 import 'profile_viewmodel.dart';
 import 'edit_profile_screen.dart';
@@ -54,61 +55,102 @@ class _ProfileScreenState
   |--------------------------------------------------------------------------
   */
 
-  Future<void> loadProfile() async {
+ Future<void> loadProfile() async {
 
-    try {
+  try {
 
-      final prefs =
-          await SharedPreferences.getInstance();
+    final prefs =
+        await SharedPreferences.getInstance();
 
-      final devices =
-          await DeviceService.getDevices();
+    /*
+    ------------------------------------------
+    GET PROFILE DARI API
+    ------------------------------------------
+    */
 
-      final avatar =
-          await AvatarService.getAvatar();
+    final profileData =
+        await UserService.getProfile();
 
-      if (!mounted) return;
+    final user = profileData['user'];
+
+    /*
+    ------------------------------------------
+    DEVICE
+    ------------------------------------------
+    */
+
+    final devices =
+        await DeviceService.getDevices();
+
+    /*
+    ------------------------------------------
+    AVATAR
+    ------------------------------------------
+    */
+
+    final avatar =
+        await AvatarService.getAvatar();
+
+    if (!mounted) return;
+
+    setState(() {
+
+      /*
+      ------------------------------------------
+      NAME
+      ------------------------------------------
+      */
+
+      name =
+          prefs.getString('name') ??
+          user['name'] ??
+          "";
+
+      /*
+      ------------------------------------------
+      EMAIL (DARI DATABASE/API)
+      ------------------------------------------
+      */
+
+      email =
+          user['email'] ?? "";
+
+      /*
+      ------------------------------------------
+      AVATAR
+      ------------------------------------------
+      */
+
+      currentAvatar = avatar;
+
+      /*
+      ------------------------------------------
+      DEVICE
+      ------------------------------------------
+      */
+
+      totalDevice = devices.length;
+
+      connectedDevice = devices.where(
+        (e) => e['is_active'] == true,
+      ).length;
+
+      isLoading = false;
+    });
+
+  } catch (e) {
+
+    print("PROFILE ERROR: $e");
+
+    if (mounted) {
 
       setState(() {
 
-        /*
-        ------------------------------------------
-        AMBIL DARI LOCAL
-        ------------------------------------------
-        */
-
-        name =
-            prefs.getString('name') ?? "";
-
-        email =
-            prefs.getString('email') ?? "";
-
-        currentAvatar = avatar;
-
-        /*
-        ------------------------------------------
-        DEVICE
-        ------------------------------------------
-        */
-
-        totalDevice = devices.length;
-
-        connectedDevice = devices.where(
-          (e) => e['is_active'] == true,
-        ).length;
-
-        isLoading = false;
-      });
-
-    } catch (e) {
-
-      print("PROFILE ERROR: $e");
-
-      setState(() {
         isLoading = false;
       });
     }
   }
+}
 
   /*
   |--------------------------------------------------------------------------
@@ -218,42 +260,30 @@ class _ProfileScreenState
                         */
 
                         Column(
-
-                          crossAxisAlignment:
-                              CrossAxisAlignment.start,
-
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
 
                             Text(
-
-                              isLoading
-                                  ? "Loading..."
-                                  : name,
-
-                              style:
-                                  GoogleFonts.inter(
-
+                              isLoading ? "Loading..." : name,
+                              style: GoogleFonts.inter(
                                 fontSize: 16,
-
-                                fontWeight:
-                                    FontWeight.w600,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.black87,
                               ),
                             ),
 
                             const SizedBox(height: 4),
 
                             Text(
-
                               isLoading
                                   ? "Loading..."
-                                  : email,
-
-                              style:
-                                  GoogleFonts.inter(
-
+                                  : (email.isEmpty
+                                      ? "email@gmail.com"
+                                      : email),
+                              style: GoogleFonts.inter(
                                 fontSize: 13,
-
-                                color: Colors.grey,
+                                color: Colors.grey.shade600,
+                                fontWeight: FontWeight.w400,
                               ),
                             ),
                           ],

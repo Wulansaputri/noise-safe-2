@@ -71,6 +71,55 @@ class DeviceService {
     }
   }
 
+  /*
+|--------------------------------------------------------------------------
+| UPDATE DEVICE
+|--------------------------------------------------------------------------
+*/
+
+static Future<void> updateDevice({
+
+  required int deviceId,
+  required String ownerName,
+  required String location,
+
+}) async {
+
+  final prefs =
+      await SharedPreferences.getInstance();
+
+  final token =
+      prefs.getString('token');
+
+  final response = await http.put(
+
+    Uri.parse(
+      "${ApiConstants.baseUrl}/devices/$deviceId",
+    ),
+
+    headers: {
+
+      "Accept": "application/json",
+
+      "Authorization": "Bearer $token",
+    },
+
+    body: {
+
+      "owner_name": ownerName,
+    },
+  );
+
+  print("UPDATE DEVICE: ${response.body}");
+
+  if (response.statusCode != 200) {
+
+    throw Exception(
+      "Gagal update device",
+    );
+  }
+}
+
 
   // ================= DELETE DEVICE =================
     static Future<void> deleteDevice(int id) async {

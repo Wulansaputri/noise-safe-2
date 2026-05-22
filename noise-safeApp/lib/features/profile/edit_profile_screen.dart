@@ -6,6 +6,7 @@ import '../../../shared_widgets/custom_header.dart';
 import '../../core/constants/app_spacing.dart';
 import '../../../services/avatar_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../services/user_service.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final String name;
@@ -57,6 +58,7 @@ class _EditProfileScreenState
     phoneController = TextEditingController();
 
     _loadAvatar();
+    _loadEmergencyPhone();
   }
 
   @override
@@ -107,6 +109,23 @@ class _EditProfileScreenState
 
   /*
   |--------------------------------------------------------------------------
+  | LOAD EMERGENCY PHONE
+  |--------------------------------------------------------------------------
+  */
+
+  Future<void> _loadEmergencyPhone() async {
+
+    final prefs =
+        await SharedPreferences.getInstance();
+
+    final phone =
+        prefs.getString('emergency_phone') ?? "";
+
+    phoneController.text = phone;
+  }
+
+  /*
+  |--------------------------------------------------------------------------
   | CHANGE AVATAR
   |--------------------------------------------------------------------------
   */
@@ -150,12 +169,24 @@ class _EditProfileScreenState
 
     try {
 
+      /*
+      ------------------------------------------------
+      UPDATE KE DATABASE
+      ------------------------------------------------
+      */
+
+      await UserService.updateProfile(
+        name: nameController.text,
+        phone: phoneController.text,
+        avatar: currentAvatar,
+      );
+
       final prefs =
           await SharedPreferences.getInstance();
 
       /*
       ------------------------------------------------
-      SIMPAN DATA
+      SIMPAN LOCAL
       ------------------------------------------------
       */
 
@@ -172,6 +203,11 @@ class _EditProfileScreenState
       await prefs.setString(
         'user_avatar',
         currentAvatar,
+      );
+
+      await prefs.setString(
+        'emergency_phone',
+        phoneController.text,
       );
 
       /*
@@ -505,6 +541,7 @@ class _EditProfileScreenState
                   CustomTextField(
                     controller: emailController,
                     hint: 'Masukan email',
+                    readOnly: true,
                   ),
 
                   const SizedBox(height: 20),

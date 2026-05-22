@@ -17,22 +17,62 @@ class _HomeLayoutState extends State<HomeLayout> {
 
   int currentIndex = 0;
 
-  final List<Widget> pages = [
-    const HomeContent(),
-    const AddDeviceScreen(),
-    const ManageDeviceScreen(),
-    const ProfileScreen(),
-  ];
-
   @override
   Widget build(BuildContext context) {
+
+    /*
+    ------------------------------------------------
+    PAGES
+    ------------------------------------------------
+    */
+
+    final List<Widget> pages = [
+
+      /*
+      HOME
+      */
+
+      const HomeContent(
+        key: ValueKey("home"),
+      ),
+
+      /*
+      ADD DEVICE
+      */
+
+      const AddDeviceScreen(),
+
+      /*
+      MANAGE DEVICE
+      */
+
+      const ManageDeviceScreen(
+        key: ValueKey("manage"),
+      ),
+
+      /*
+      PROFILE
+      */
+
+      const ProfileScreen(),
+    ];
+
     return Scaffold(
+
       body: pages[currentIndex],
 
       bottomNavigationBar: BottomNavbar(
+
         currentIndex: currentIndex,
+
         onTap: (index) {
+
           setState(() {
+
+            /*
+            REBUILD PAGE
+            */
+
             currentIndex = index;
           });
         },

@@ -3,11 +3,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:noise_safe_1/core/theme/app_colors.dart';
 
 class CustomTextField extends StatelessWidget {
-  final String? label; // ✅ ubah jadi optional
+  final String? label;
   final String hint;
   final TextEditingController controller;
   final Widget? suffixIcon;
   final bool obscureText;
+  final bool readOnly; // 🔥 TAMBAHAN
   final FocusNode? focusNode;
   final TextInputAction? textInputAction;
   final Function(String)? onSubmitted;
@@ -16,11 +17,12 @@ class CustomTextField extends StatelessWidget {
 
   const CustomTextField({
     super.key,
-    this.label, // ✅ tidak wajib
+    this.label,
     required this.hint,
     required this.controller,
     this.suffixIcon,
     this.obscureText = false,
+    this.readOnly = false, // 🔥 TAMBAHAN
     this.focusNode,
     this.textInputAction,
     this.onSubmitted,
@@ -36,9 +38,10 @@ class CustomTextField extends StatelessWidget {
 
         /*
         ----------------------------------------------------------
-        LABEL TEXT (TETAP ADA, TAPI CONDITIONAL)
+        LABEL TEXT
         ----------------------------------------------------------
         */
+
         if (label != null && label!.isNotEmpty) ...[
           Text(
             label!,
@@ -54,33 +57,43 @@ class CustomTextField extends StatelessWidget {
 
         /*
         ----------------------------------------------------------
-        INPUT FIELD (TETAP SAMA)
+        INPUT FIELD
         ----------------------------------------------------------
         */
 
         TextField(
           controller: controller,
           obscureText: obscureText,
+          readOnly: readOnly, // 🔥 TAMBAHAN
           focusNode: focusNode,
           textInputAction: textInputAction,
           onSubmitted: onSubmitted,
           decoration: InputDecoration(
             hintText: hint,
+
             hintStyle: hintStyle ??
                 GoogleFonts.inter(
                   fontSize: 14,
                   color: AppColors.placeholder,
                 ),
+
             filled: true,
-            fillColor: const Color(0xFFF2F2F2),
+
+            // 🔥 WARNA BEDA JIKA READONLY
+            fillColor: readOnly
+                ? const Color(0xFFE8E8E8)
+                : const Color(0xFFF2F2F2),
+
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
               vertical: 14,
             ),
+
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
             ),
+
             suffixIcon: suffixIcon != null
                 ? IconTheme(
                     data: const IconThemeData(

@@ -166,6 +166,166 @@ class _ManageDeviceScreenState
   }
 
   /*
+|--------------------------------------------------------------------------
+| EDIT DEVICE
+|--------------------------------------------------------------------------
+*/
+
+Future<void> showEditDialog(dynamic device) async {
+
+  final nameController = TextEditingController(
+    text: device['owner_name'] ?? "",
+  );
+
+  final locationController = TextEditingController(
+    text: device['location'] ?? "",
+  );
+
+  showDialog(
+
+    context: context,
+
+    builder: (_) {
+
+      return AlertDialog(
+
+        title: const Text(
+          "Edit Device",
+        ),
+
+        content: Column(
+
+          mainAxisSize: MainAxisSize.min,
+
+          children: [
+
+            /*
+            ------------------------------------------------
+            NAMA
+            ------------------------------------------------
+            */
+
+            TextField(
+
+              controller: nameController,
+
+              decoration: const InputDecoration(
+                labelText: "Nama Pemilik",
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            /*
+            ------------------------------------------------
+            LOCATION
+            ------------------------------------------------
+            */
+
+            TextField(
+
+              controller: locationController,
+
+              decoration: const InputDecoration(
+                labelText: "Lokasi",
+              ),
+            ),
+          ],
+        ),
+
+        actions: [
+
+          /*
+          ------------------------------------------------
+          BATAL
+          ------------------------------------------------
+          */
+
+          TextButton(
+
+            onPressed: () {
+
+              Navigator.pop(context);
+            },
+
+            child: const Text("Batal"),
+          ),
+
+          /*
+          ------------------------------------------------
+          SIMPAN
+          ------------------------------------------------
+          */
+
+          ElevatedButton(
+
+            onPressed: () async {
+
+              try {
+
+                /*
+                ----------------------------------------
+                UPDATE KE DATABASE
+                ----------------------------------------
+                */
+
+                await DeviceService.updateDevice(
+
+                  deviceId: device['device_id'],
+
+                  ownerName:
+                      nameController.text,
+
+                  location:
+                      locationController.text,
+                );
+
+                /*
+                ----------------------------------------
+                REFRESH DEVICE
+                ----------------------------------------
+                */
+
+                await loadDevices();
+
+                Navigator.pop(context);
+
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(
+
+                  const SnackBar(
+
+                    content: Text(
+                      "Device berhasil diupdate",
+                    ),
+                  ),
+                );
+
+              } catch (e) {
+
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(
+
+                  SnackBar(
+                    content: Text(
+                      "Error: $e",
+                    ),
+                  ),
+                );
+              }
+            },
+
+            child: const Text(
+              "Simpan",
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+  /*
   |--------------------------------------------------------------------------
   | BUILD
   |--------------------------------------------------------------------------
@@ -319,8 +479,7 @@ class _ManageDeviceScreenState
 
                             battery:
                                 device['battery']
-                                    ?.toString() ??
-                                "0%",
+                                    ?.toString() ?? "0%",
 
                             location:
                                 device['location']
@@ -331,9 +490,16 @@ class _ManageDeviceScreenState
                                     ?? false,
 
                             onDelete: () {
-                              showDeleteDialog(
-                                  device);
+                              showDeleteDialog(device);
                             },
+
+                           onEdit: () async {
+
+                              await showEditDialog(device);
+
+                              loadDevices();
+                            },
+                            
                           );
                         },
                       ),
@@ -411,6 +577,7 @@ class DeviceCard extends StatelessWidget {
   final bool isActive;
 
   final VoidCallback onDelete;
+  final VoidCallback onEdit;
 
   const DeviceCard({
     super.key,
@@ -420,6 +587,7 @@ class DeviceCard extends StatelessWidget {
     required this.location,
     required this.isActive,
     required this.onDelete,
+    required this.onEdit,
   });
 
   @override
@@ -435,6 +603,14 @@ class DeviceCard extends StatelessWidget {
 
         borderRadius:
             BorderRadius.circular(16),
+
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
 
       child: Row(
@@ -474,6 +650,12 @@ class DeviceCard extends StatelessWidget {
                     CrossAxisAlignment.start,
 
                 children: [
+
+                  /*
+                  --------------------------------------------------
+                  HEADER
+                  --------------------------------------------------
+                  */
 
                   Row(
                     mainAxisAlignment:
@@ -524,9 +706,20 @@ class DeviceCard extends StatelessWidget {
                         ),
                       ),
 
+                      /*
+                      ------------------------
+                      POPUP MENU
+                      ------------------------
+                      */
+
                       PopupMenuButton(
 
                         itemBuilder: (context) => [
+
+                          const PopupMenuItem(
+                            value: 'edit',
+                            child: Text("Edit"),
+                          ),
 
                           const PopupMenuItem(
                             value: 'delete',
@@ -536,8 +729,11 @@ class DeviceCard extends StatelessWidget {
 
                         onSelected: (value) {
 
-                          if (value ==
-                              'delete') {
+                          if (value == 'edit') {
+
+                            onEdit();
+
+                          } else if (value == 'delete') {
 
                             onDelete();
                           }
@@ -547,6 +743,12 @@ class DeviceCard extends StatelessWidget {
                   ),
 
                   const SizedBox(height: 10),
+
+                  /*
+                  --------------------------------------------------
+                  STATUS
+                  --------------------------------------------------
+                  */
 
                   Container(
 
@@ -581,6 +783,12 @@ class DeviceCard extends StatelessWidget {
 
                   const SizedBox(height: 10),
 
+                  /*
+                  --------------------------------------------------
+                  BATTERY
+                  --------------------------------------------------
+                  */
+
                   Row(
                     children: [
 
@@ -603,6 +811,12 @@ class DeviceCard extends StatelessWidget {
                   ),
 
                   const SizedBox(height: 6),
+
+                  /*
+                  --------------------------------------------------
+                  LOCATION
+                  --------------------------------------------------
+                  */
 
                   Text(
                     location,

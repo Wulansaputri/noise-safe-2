@@ -8,6 +8,12 @@ use Illuminate\Support\Facades\DB;
 
 class DeviceController extends Controller
 {
+    /*
+    |--------------------------------------------------------------------------
+    | CONNECT DEVICE
+    |--------------------------------------------------------------------------
+    */
+
     public function connect(Request $request)
     {
         $request->validate([
@@ -22,12 +28,14 @@ class DeviceController extends Controller
             ->first();
 
         if (!$device) {
+
             return response()->json([
                 'message' => 'Device tidak ditemukan'
             ], 404);
         }
 
         if ($device->user_id != null) {
+
             return response()->json([
                 'message' => 'Device sudah digunakan'
             ], 400);
@@ -45,6 +53,12 @@ class DeviceController extends Controller
         ]);
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | GET DEVICES
+    |--------------------------------------------------------------------------
+    */
+
     public function index(Request $request)
     {
         $user = $request->user();
@@ -54,26 +68,75 @@ class DeviceController extends Controller
             ->get();
 
         return response()->json([
-        'devices' => $devices->map(function ($device) {
 
-            return [
+            'devices' => $devices->map(function ($device) {
 
-                'device_id' => $device->device_id,
+                return [
 
-                'owner_name' => $device->owner_name,
+                    'device_id' => $device->device_id,
 
-                'serial_number' => $device->serial_number,
+                    'owner_name' => $device->owner_name,
 
-                'battery' => '100%',
+                    'serial_number' => $device->serial_number,
 
-                'location' => 'Unknown',
+                    'battery' => '100%',
 
-                'is_active' => $device->status === 'active',
+                    'location' => $device->location ?? 'Unknown',
+
+                    'is_active' => $device->status === 'active',
                 ];
             }),
         ]);
-    
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | UPDATE DEVICE
+    |--------------------------------------------------------------------------
+    */
+
+   /*
+|--------------------------------------------------------------------------
+| UPDATE DEVICE
+|--------------------------------------------------------------------------
+*/
+
+public function update(Request $request, $id)
+{
+    $request->validate([
+        'owner_name' => 'required',
+        'location' => 'nullable',
+    ]);
+
+    $device = DB::table('devices')
+        ->where('device_id', $id)
+        ->first();
+
+    if (!$device) {
+
+        return response()->json([
+            'message' => 'Device tidak ditemukan'
+        ], 404);
+    }
+
+    DB::table('devices')
+        ->where('device_id', $id)
+        ->update([
+
+            'owner_name' => $request->owner_name,
+        ]);
+
+    return response()->json([
+
+        'message' => 'Device berhasil diupdate'
+    ]);
+}
+
+    /*
+    |--------------------------------------------------------------------------
+    | DELETE DEVICE
+    |--------------------------------------------------------------------------
+    */
 
     public function delete($id)
     {
@@ -82,6 +145,7 @@ class DeviceController extends Controller
             ->first();
 
         if (!$device) {
+
             return response()->json([
                 'message' => 'Device tidak ditemukan'
             ], 404);
@@ -92,6 +156,7 @@ class DeviceController extends Controller
             ->delete();
 
         return response()->json([
+
             'message' => 'Device berhasil dihapus'
         ]);
     }
